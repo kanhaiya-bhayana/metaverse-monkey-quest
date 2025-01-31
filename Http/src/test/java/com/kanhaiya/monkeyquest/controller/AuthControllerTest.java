@@ -47,7 +47,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("User is able to sing up only once")
-    void User_Is_Able_To_SignUp(){
+    void userIsAbleToSignUp(){
         // Arrange
         SignUpDto signUpRequest = new SignUpDto();
         signUpRequest.setUserName("abc"+random.nextInt(100));
@@ -77,7 +77,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("Signup request fails if the username is empty")
-    void Signup_Request_Fails_If_Username_Is_Empty(){
+    void signupRequestFailsIfUsernameIsEmpty(){
         // Arrange
         SignUpDto signUpRequest = new SignUpDto();
 //        signUpRequest.setUserName("");
@@ -100,7 +100,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("Signin succeeds if the username and password are correct")
-    void Signin_Succeeds_If_The_Username_And_Password_Are_Correct(){
+    void signinSucceedsIfTheUsernameAndPasswordAreCorrect(){
         // Arrange
         SignUpDto signUpRequest = new SignUpDto();
         signUpRequest.setUserName("abc"+random.nextInt(100));
@@ -126,7 +126,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("Signin fails if the username and password are incorrect")
-    void Signin_Fails_If_The_Username_And_Password_Are_Incorrect(){
+    void signinFailsIfTheUsernameAndPasswordAreIncorrect(){
         // Arrange
         SignUpDto signUpRequest = new SignUpDto();
         signUpRequest.setUserName("abc"+random.nextInt(100));

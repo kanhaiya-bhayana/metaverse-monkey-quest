@@ -77,7 +77,7 @@ class UserControllerTest {
 
     @DisplayName("User can not update their metadata with a wrong avatar id")
     @Test
-    void User_Cannot_Update_Their_Metadata_With_A_Wrong_AvatarId(){
+    void userCannotUpdateTheirMetadataWithAWrongAvatarId(){
         String metaDataUrl = baseUrl+":"+serverPort+"/api/v1/user/metadata";
         String avatarId = "123123";
 
@@ -90,7 +90,7 @@ class UserControllerTest {
 
     @DisplayName("User can update their metadata with a right avatar id")
     @Test
-    void User_Can_Update_Their_Metadata_With_A_Right_AvatarId(){
+    void userCanUpdateTheirMetadataWithARightAvatarId(){
         String metaDataUrl = baseUrl+":"+serverPort+"/api/v1/user/metadata";
 
         HttpEntity<String> httpRequest = new HttpEntity<>(avatarId, headers);
@@ -102,7 +102,7 @@ class UserControllerTest {
 
     @DisplayName("User is not able to update their metadata if the auth header is not present")
     @Test
-    void User_Is_Not_Able_To_Update_Their_Metadata_If_The_Auth_Header_Is_Not_Present(){
+    void userIsNotAbleToUpdateTheirMetadataIfTheAuthHeaderIsNotPresent() {
         String metaDataUrl = baseUrl+":"+serverPort+"/api/v1/user/metadata";
 
         HttpEntity<String> httpRequest = new HttpEntity<>(avatarId);
