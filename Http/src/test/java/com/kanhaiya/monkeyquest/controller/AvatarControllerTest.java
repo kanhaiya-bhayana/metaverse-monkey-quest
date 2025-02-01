@@ -74,7 +74,7 @@ class AvatarControllerTest {
 
         userId = signUpResponse.getBody();
         token = signInUser.getBody().getJwtToken();
-        headers.setBearerAuth(token);
+        // headers.setBearerAuth(token);  // Uncomment this line to make the endpoints authenticated
         avatarId = avatarResponse.getBody();
 
 
@@ -104,6 +104,11 @@ class AvatarControllerTest {
         // Example: Checking if the JSON response contains the expected userid
         assertTrue(response.getBody().has("userId"), "Response should contain an 'userId' ");
 
+    }
+
+    @DisplayName("Get back avatar information for a user")
+    @Test
+    void getBackAvatarInformationForAUser(){
     }
 
 }
