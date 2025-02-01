@@ -55,7 +55,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -113,6 +116,25 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>4.31.0</version>
+				<configuration>
+					<changeLogFile>src/main/resources/db/changelog/changelog-master.xml</changeLogFile>
+					<!-- <outputChangeLogFile>changelog-output.sql</outputChangeLogFile> -->
+					<url>jdbc:postgresql://ep-silent-fire-a8irz4wb-pooler.eastus2.azure.neon.tech/monkeyquest</url>
+					<username>neondb_owner</username>
+					<password>npg_VqUgStY97NRu</password>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.postgresql</groupId>
+						<artifactId>postgresql</artifactId>
+						<version>42.7.3</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
