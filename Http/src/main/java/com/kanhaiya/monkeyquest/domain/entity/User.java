@@ -22,5 +22,7 @@ public class User {
     @JsonBackReference
     private Avatar avatar;
 
-    private UserRole role = UserRole.USER;
+    @Enumerated(EnumType.STRING) // Store as ENUM instead of VARCHAR
+    @Column(columnDefinition = "user_role", nullable = false)
+    private UserRole role;
 }

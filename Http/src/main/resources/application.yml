@@ -1,7 +1,12 @@
 spring:
   application:
     name: monkeyquest
+  sql:
+    init:
+      data-locations: classpath:data.psql
+      mode: always   # Ensure the script runs on startup
   jpa:
+#    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop
     #      ddl-auto: update
@@ -13,10 +18,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://ep-soft-recipe-a189x52v.ap-southeast-1.aws.neon.tech/metaverse?sslmode=require
+    url: jdbc:postgresql://ep-silent-fire-a8irz4wb-pooler.eastus2.azure.neon.tech/monkeyquest
     #    url: jdbc:postgresql://ep-soft-recipe-a189x52v.ap-southeast-1.aws.neon.tech/test?sslmode=require
-    username: learning_postgres_owner
-    password: t8qELP1OjCFp
+    username: neondb_owner
+    password: npg_VqUgStY97NRu
     driver-class-name: org.postgresql.Driver
 server:
   port: 5455
