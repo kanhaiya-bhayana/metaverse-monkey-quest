@@ -12,16 +12,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SpaceElements {
+public class MapElements {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String elementId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "space_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "map_id", referencedColumnName = "id")
     @JsonBackReference
-    private Space space;
-    private int x;
-    private int y;
+    private Map map;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "element_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Element element;
+    int x;
+    int y;
 }

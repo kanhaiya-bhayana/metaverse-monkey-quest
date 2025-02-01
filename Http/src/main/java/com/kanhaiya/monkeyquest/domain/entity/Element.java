@@ -1,5 +1,4 @@
 package com.kanhaiya.monkeyquest.domain.entity;
-import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -8,20 +7,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Entity
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class Space {
+public class Element {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
-    @OneToMany(mappedBy = "space",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private Set<SpaceElements> spaceElements = new HashSet<>();
-    private String name;
     private int width;
     private int height;
+    private String imageUrl;
+
+    @OneToMany(mappedBy = "element", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<MapElements> mapElementsSet = new HashSet<>();
 }
