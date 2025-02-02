@@ -15,12 +15,13 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Map {
+public class GameMap {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private int height;
     private int width;
+    private String thumbnail;
 
     @OneToMany(mappedBy = "map", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JsonManagedReference

@@ -59,8 +59,8 @@ class AvatarControllerTest {
                 "q=tbn:ANd9GcReDcgAZWsQXdjCrEsbEDPOcZE2-qlrrNxftQ&s");
         avatarRequest.setName("Timmy");
 
-        String signInUrl = baseUrl+":"+serverPort+"/"+"/api/v1/auth/signin";
         String signUpUrl = baseUrl+":"+serverPort+"/"+"/api/v1/auth/signup";
+        String signInUrl = baseUrl+":"+serverPort+"/"+"/api/v1/auth/signin";
         String creatAvatarUrl = baseUrl+":"+serverPort+"/"+"/api/v1/admin/avatar";
 
         headers = new HttpHeaders();
@@ -80,8 +80,6 @@ class AvatarControllerTest {
         token = signInUser.getBody().getJwtToken();
         // headers.setBearerAuth(token);  // Uncomment this line to make the endpoints authenticated
         avatarId = avatarResponse.getBody();
-
-
     }
 
     @DisplayName("Get back avatar information for a user")

@@ -22,6 +22,7 @@ public class Element {
     private int width;
     private int height;
     private String imageUrl;
+    private boolean isStatic;
 
     @OneToMany(mappedBy = "element", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JsonManagedReference
