@@ -19,7 +19,7 @@ public class MapElements {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "map_id", referencedColumnName = "id")
     @JsonBackReference
-    private Map map;
+    private GameMap gameMap;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "element_id", referencedColumnName = "id")
