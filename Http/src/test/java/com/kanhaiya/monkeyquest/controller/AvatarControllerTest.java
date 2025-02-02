@@ -80,8 +80,6 @@ class AvatarControllerTest {
         token = signInUser.getBody().getJwtToken();
         // headers.setBearerAuth(token);  // Uncomment this line to make the endpoints authenticated
         avatarId = avatarResponse.getBody();
-
-
     }
 
     @DisplayName("Get back avatar information for a user")
