@@ -4,15 +4,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.kanhaiya.monkeyquest.domain.dto.request.CreateAvatarDto;
 import com.kanhaiya.monkeyquest.domain.dto.request.SignUpDto;
 import com.kanhaiya.monkeyquest.domain.dto.response.LoginResponse;
+import com.kanhaiya.monkeyquest.domain.entity.Avatar;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JsonContent;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -93,7 +97,12 @@ class AvatarControllerTest {
         HttpEntity<Void> httpRequest = new HttpEntity<>(headers);
 
         // Use exchange to retrieve JSON response
-        ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.GET, httpRequest, JsonNode.class);
+        ResponseEntity<JsonNode> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                httpRequest,
+                JsonNode.class
+        );
 
         // Assertions for validation
         assertNotNull(response.getBody());
@@ -106,9 +115,25 @@ class AvatarControllerTest {
 
     }
 
-    @DisplayName("Get back avatar information for a user")
+    @DisplayName("Available avatars lists the recently created avatar")
     @Test
-    void getBackAvatarInformationForAUser(){
+    void availableAvatarsListsTheRecentlyCreatedAvatar(){
+        String url = baseUrl+":"+serverPort+"/api/v1/avatars";
+
+        HttpEntity<Void> httpEntity = new HttpEntity<>(headers);
+        ResponseEntity<List<Avatar>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                httpEntity,
+                new ParameterizedTypeReference<List<Avatar>>() {}
+        );
+
+        Optional<Avatar> currentAvatar = Objects.requireNonNull(response.getBody())
+                .stream()
+                .filter(a -> avatarId.equals(a.getId()))
+                .findFirst();
+
+        assertTrue(currentAvatar.isPresent(), "Avatar with ID: " + avatarId + "  should be present");
     }
 
 }
