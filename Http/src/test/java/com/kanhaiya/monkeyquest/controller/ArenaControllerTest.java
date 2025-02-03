@@ -50,18 +50,6 @@ public class AreneControllerTest{
         signUpRequestAdmin.setPassword("12345");
         signUpRequestAdmin.setRole(UserRole.ADMIN);
 
-        CreateElementDto createElement1Request = new CreateElementDto();
-        createElement1Request.setImageUrl("");
-        createElement1Request.setHeight(1);
-        createElement1Request.setWidth(1);
-        createElement1Request.setStatic(true);
-
-        CreateElementDto createElement2Request = new CreateElementDto();
-        createElement2Request.setImageUrl("");
-        createElement2Request.setHeight(1);
-        createElement2Request.setWidth(1);
-        createElement2Request.setStatic(true);
-
         String signUpUrl = baseUrl+":"+serverPort+"/"+"/api/v1/auth/signup";
         String signInUrl = baseUrl+":"+serverPort+"/"+"/api/v1/auth/signin";
         String elementUrl = baseUrl+":"+serverPort+"/"+"/api/v1/admin/element";
@@ -89,6 +77,18 @@ public class AreneControllerTest{
 
 
         // Create elements
+        CreateElementDto createElement1Request = new CreateElementDto();
+        createElement1Request.setImageUrl("");
+        createElement1Request.setHeight(100);
+        createElement1Request.setWidth(200);
+        createElement1Request.setStatic(true);
+
+        CreateElementDto createElement2Request = new CreateElementDto();
+        createElement2Request.setImageUrl("");
+        createElement2Request.setHeight(100);
+        createElement2Request.setWidth(200);
+        createElement2Request.setStatic(true);
+
         HttpEntity<CreateElementDto> element1HttpRequest = new HttpEntity<>(createElement1Request, adminHeaders);
         HttpEntity<CreateElementDto> element2HttpRequest = new HttpEntity<>(createElement2Request, adminHeaders);
         ResponseEntity<Element> element1Response = restTemplate.postForEntity(elementUrl, element1HttpRequest, Element.class);
@@ -158,4 +158,70 @@ public class AreneControllerTest{
         assertEquals(HttpStatus.BAD_REQUEST, spaceResponse.getStatusCode(), 
                 "Status code should be 400");
     }
+
+    @DisplayName("Correct spaceId returns all the elements")
+    @Test
+    void correctSpaceIdReturnsAllTheElements(){
+        String spaceUrl = baseUrl+":"+serverPort+"/api/v1/space/"+spaceId;
+
+        HttpEntity<Void> httpRequest = new HttpEntity<>(headers);
+        ResponseEntity<List<Element>> spaceResponse = restTemplate.postForEntity(
+                spaceUrl, 
+                httpRequest, 
+                new ParameterizedTypeReference<List<Element>>(){}
+        );
+
+        assertEquals(2, Object.requireNonNull(spaceResponse.getBody()).size(),
+                "Response list size should be 2");
+
+        assertEquals(100, Object.requireNonNull(spaceResponse.getBody()).get(0).getHeight(), 
+                "Height of first element should be 100");
+        
+        assertEquals(200, Object.requireNonNull(spaceResponse.getBody()).get(0).getWidth(), 
+                "Width of first element should be 200");
+
+        assertEquals(HttpStatus.BAD_REQUEST, spaceResponse.getStatusCode(), 
+                "Status code should be 200");
+    }
+
+    @DisplayName("Delete endpoint is able to delete an element")
+    @Test
+    void deleteEndpointIsAbleToDeleteAnElement(){
+        String spaceUrl = baseUrl+":"+serverPort+"/api/v1/space/"+spaceId;
+        String delementElementUrl = baseUrl+":"+serverPort+"/api/v1/space/element";
+
+        // get the all elements
+        HttpEntity<Void> httpRequest = new HttpEntity<>(headers);
+        ResponseEntity<List<Element>> spaceResponse = restTemplate.postForEntity(
+                spaceUrl, 
+                httpRequest, 
+                new ParameterizedTypeReference<List<Element>>(){}
+        );
+
+        // delete element
+        DeleteElementDto deleteElementRequest = new DeleteElementDto();
+        deleteElementRequest.setSpaceId(spaceId);
+        deleteElementRequest.setElementId(spaceResponse.getBody().get(0).getId());
+
+        HttpEntity<DeleteElementDto> httpDeleteRequest = new HttpEntity<>(deleteElementRequest, userHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(
+            delementElementUrl,
+            HttpMethod.Delete,
+            httpDeleteRequest,
+            String.class
+        );
+
+        // get the all elements
+        HttpEntity<Void> httpRequest2 = new HttpEntity<>(headers);
+        ResponseEntity<List<Element>> spaceResponse2 = restTemplate.postForEntity(
+                spaceUrl, 
+                httpRequest2, 
+                new ParameterizedTypeReference<List<Element>>(){}
+        );
+
+        assertEquals(1, Object.requireNonNull(spaceResponse2.getBody()).size(),
+                "Response list size should be 1");
+    }
+
+
 }
