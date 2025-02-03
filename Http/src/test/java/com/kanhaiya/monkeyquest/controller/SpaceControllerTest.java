@@ -140,9 +140,6 @@ class SpaceControllerTest {
         ResponseEntity<GameMap> mapResponseEntity = restTemplate.postForEntity(mapUrl, httpMapRequest, GameMap.class);
 
         mapId = mapResponseEntity.getBody().getId();
-
-
-
     }
 
 
