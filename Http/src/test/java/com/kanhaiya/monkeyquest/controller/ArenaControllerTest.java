@@ -173,7 +173,7 @@ public class ArenaControllerTest{
         String tempSpaceId = "123sp-id";
         String spaceUrl = baseUrl+":"+serverPort+"/api/v1/space/"+tempSpaceId;
 
-        HttpEntity<Void> httpRequest = new HttpEntity<>(headers);
+        HttpEntity<Void> httpRequest = new HttpEntity<>(userHeaders);
         ResponseEntity<String> spaceResponse = restTemplate.postForEntity(
                 spaceUrl, 
                 httpRequest, 
@@ -189,7 +189,7 @@ public class ArenaControllerTest{
     void correctSpaceIdReturnsAllTheElements(){
         String spaceUrl = baseUrl+":"+serverPort+"/api/v1/space/"+spaceId;
 
-        HttpEntity<Void> httpRequest = new HttpEntity<>(headers);
+        HttpEntity<Void> httpRequest = new HttpEntity<>(userHeaders);
         ResponseEntity<List<Element>> spaceResponse = restTemplate.exchange(
                 spaceUrl,
                 HttpMethod.GET
@@ -217,7 +217,7 @@ public class ArenaControllerTest{
         String delementElementUrl = baseUrl+":"+serverPort+"/api/v1/space/element";
 
         // get the all elements
-        HttpEntity<Void> httpRequest = new HttpEntity<>(headers);
+        HttpEntity<Void> httpRequest = new HttpEntity<>(userHeaders);
         ResponseEntity<List<Element>> spaceResponse = restTemplate.exchange(
                 spaceUrl,
                 HttpMethod.GET,
@@ -239,7 +239,7 @@ public class ArenaControllerTest{
         );
 
         // get the all elements
-        HttpEntity<Void> httpRequest2 = new HttpEntity<>(headers);
+        HttpEntity<Void> httpRequest2 = new HttpEntity<>(userHeaders);
         ResponseEntity<List<Element>> spaceResponse2 = restTemplate.exchange(
                 spaceUrl,
                 HttpMethod.GET,
@@ -251,6 +251,70 @@ public class ArenaControllerTest{
                 "Status code should be 200");
         assertEquals(1, Objects.requireNonNull(spaceResponse2.getBody()).size(),
                 "Response list size should be 1");
+    }
+
+    @DisplayName("Adding an element works as expected")
+    @Test
+    void addingAnElementWorksAsExpected(){
+        String spaceGetUrl = baseUrl+":"+serverPort+"/api/v1/space/"+spaceId;
+        String spacePostUrl = baseUrl+":"+serverPort+"/api/v1/space/element";
+
+        // create space element
+        CreateSpaceElementDto createSpaceElementRequest = CreateSpaceElementDto.builder()
+                .elementId(element1Id)
+                .spaceId(spaceId)
+                .x(50)
+                .y(20)
+                .build();
+
+
+        HttpEntity<CreateSpaceElementDto> httpPostRequest = new HttpEntity<>(createSpaceElementRequest, userHeaders);
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                spacePostUrl,
+                httpPostRequest,
+                String.class
+        );
+
+        // get the all elements
+        HttpEntity<Void> httpRequest2 = new HttpEntity<>(userHeaders);
+        ResponseEntity<List<Element>> spaceResponse = restTemplate.exchange(
+                spaceGetUrl,
+                HttpMethod.GET,
+                httpRequest2,
+                new ParameterizedTypeReference<List<Element>>(){}
+        );
+
+        assertEquals(HttpStatus.OK, spaceResponse2.getStatusCode(),
+                "Status code should be 200");
+        assertEquals(3, Objects.requireNonNull(spaceResponse.getBody()).size(),
+                "Response list size should be 3");
+    }
+
+    @DisplayName("Adding an element fails if the element lies outside the dimensions")
+    @Test
+    void addingAnElementFailsIfTheElementLiesOutsideTheDimensions(){
+        String spaceGetUrl = baseUrl+":"+serverPort+"/api/v1/space/"+spaceId;
+        String spacePostUrl = baseUrl+":"+serverPort+"/api/v1/space/element";
+
+        // create space element
+        CreateSpaceElementDto createSpaceElementRequest = CreateSpaceElementDto.builder()
+                .elementId(element1Id)
+                .spaceId(spaceId)
+                .x(50000)
+                .y(2000000)
+                .build();
+
+
+        HttpEntity<CreateSpaceElementDto> httpPostRequest = new HttpEntity<>(createSpaceElementRequest, userHeaders);
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                spacePostUrl,
+                httpPostRequest,
+                String.class
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(),
+                "Status code should be 400");
+
     }
 
     private static HttpHeaders createHeaders(String token){
