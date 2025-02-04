@@ -1,17 +1,42 @@
 package com.kanhaiya.monkeyquest.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.kanhaiya.monkeyquest.domain.dto.request.*;
+import com.kanhaiya.monkeyquest.domain.dto.response.LoginResponse;
+import com.kanhaiya.monkeyquest.domain.entity.Avatar;
+import com.kanhaiya.monkeyquest.domain.entity.Element;
+import com.kanhaiya.monkeyquest.domain.entity.GameMap;
+import com.kanhaiya.monkeyquest.domain.enums.UserRole;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.json.JsonContent;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+
+import static com.kanhaiya.monkeyquest.controller.SpaceControllerTest.createHeaders;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class AreneControllerTest{
+public class ArenaControllerTest{
     @Value("${local.server.port}")
     void setServerPort(int serverPort) {
-        AreneControllerTest.serverPort = serverPort;
+        ArenaControllerTest.serverPort = serverPort;
     }
 
     @Value("${local.urls.baseurl}")
     void setBaseUrl(String url){
-        AreneControllerTest.baseUrl = url;
+        ArenaControllerTest.baseUrl = url;
     }
     private static int serverPort;
     private static String baseUrl;
@@ -165,8 +190,9 @@ public class AreneControllerTest{
         String spaceUrl = baseUrl+":"+serverPort+"/api/v1/space/"+spaceId;
 
         HttpEntity<Void> httpRequest = new HttpEntity<>(headers);
-        ResponseEntity<List<Element>> spaceResponse = restTemplate.postForEntity(
-                spaceUrl, 
+        ResponseEntity<List<Element>> spaceResponse = restTemplate.exchange(
+                spaceUrl,
+                HttpMethod.GET
                 httpRequest, 
                 new ParameterizedTypeReference<List<Element>>(){}
         );
@@ -174,13 +200,13 @@ public class AreneControllerTest{
         assertEquals(2, Object.requireNonNull(spaceResponse.getBody()).size(),
                 "Response list size should be 2");
 
-        assertEquals(100, Object.requireNonNull(spaceResponse.getBody()).get(0).getHeight(), 
+        assertEquals(100, Object.requireNonNull(spaceResponse.getBody()).get(0).getHeight(),
                 "Height of first element should be 100");
         
-        assertEquals(200, Object.requireNonNull(spaceResponse.getBody()).get(0).getWidth(), 
+        assertEquals(200, Object.requireNonNull(spaceResponse.getBody()).get(0).getWidth(),
                 "Width of first element should be 200");
 
-        assertEquals(HttpStatus.BAD_REQUEST, spaceResponse.getStatusCode(), 
+        assertEquals(HttpStatus.BAD_REQUEST, spaceResponse.getStatusCode(),
                 "Status code should be 200");
     }
 
@@ -192,8 +218,9 @@ public class AreneControllerTest{
 
         // get the all elements
         HttpEntity<Void> httpRequest = new HttpEntity<>(headers);
-        ResponseEntity<List<Element>> spaceResponse = restTemplate.postForEntity(
-                spaceUrl, 
+        ResponseEntity<List<Element>> spaceResponse = restTemplate.exchange(
+                spaceUrl,
+                HttpMethod.GET,
                 httpRequest, 
                 new ParameterizedTypeReference<List<Element>>(){}
         );
@@ -213,15 +240,31 @@ public class AreneControllerTest{
 
         // get the all elements
         HttpEntity<Void> httpRequest2 = new HttpEntity<>(headers);
-        ResponseEntity<List<Element>> spaceResponse2 = restTemplate.postForEntity(
-                spaceUrl, 
+        ResponseEntity<List<Element>> spaceResponse2 = restTemplate.exchange(
+                spaceUrl,
+                HttpMethod.GET,
                 httpRequest2, 
                 new ParameterizedTypeReference<List<Element>>(){}
         );
 
-        assertEquals(1, Object.requireNonNull(spaceResponse2.getBody()).size(),
+        assertEquals(HttpStatus.OK, spaceResponse2.getStatusCode(),
+                "Status code should be 200");
+        assertEquals(1, Objects.requireNonNull(spaceResponse2.getBody()).size(),
                 "Response list size should be 1");
     }
 
+    private static HttpHeaders createHeaders(String token){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(List.of(MediaType.APPLICATION_JSON));
+        httpHeaders.setBearerAuth(token);
+        return httpHeaders;
+    }
+    private static HttpHeaders createHeaders(){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(List.of(MediaType.APPLICATION_JSON));
+        return httpHeaders;
+    }
 
 }
