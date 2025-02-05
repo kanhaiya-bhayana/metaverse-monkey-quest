@@ -1,5 +1,5 @@
 package com.kanhaiya.monkeyquest.controller;
 
-public class AreneController{
+public class ArenaController{
 
 }
