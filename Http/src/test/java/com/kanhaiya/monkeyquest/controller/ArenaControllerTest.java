@@ -6,6 +6,7 @@ import com.kanhaiya.monkeyquest.domain.dto.response.LoginResponse;
 import com.kanhaiya.monkeyquest.domain.entity.Avatar;
 import com.kanhaiya.monkeyquest.domain.entity.Element;
 import com.kanhaiya.monkeyquest.domain.entity.GameMap;
+import com.kanhaiya.monkeyquest.domain.entity.Space;
 import com.kanhaiya.monkeyquest.domain.enums.UserRole;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ import java.util.Random;
 
 import static com.kanhaiya.monkeyquest.controller.SpaceControllerTest.createHeaders;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.HttpMethod.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -164,7 +166,7 @@ public class ArenaControllerTest{
 
         HttpEntity<CreateSpaceDto> httpSapceRequest = new HttpEntity<>(spaceDto, userHeaders);
         ResponseEntity<Space> spaceResponseEntity  = restTemplate.postForEntity(spaceUrl, httpSapceRequest, Space.class);
-        spaceId = Object.requireNonNull(spaceResponseEntity.getBody()).getId();
+        spaceId = Objects.requireNonNull(spaceResponseEntity.getBody()).getId();
     }
 
     @DisplayName("Incorrect spaceId returns a 400")
@@ -192,18 +194,18 @@ public class ArenaControllerTest{
         HttpEntity<Void> httpRequest = new HttpEntity<>(userHeaders);
         ResponseEntity<List<Element>> spaceResponse = restTemplate.exchange(
                 spaceUrl,
-                HttpMethod.GET
+                GET,
                 httpRequest, 
                 new ParameterizedTypeReference<List<Element>>(){}
         );
 
-        assertEquals(2, Object.requireNonNull(spaceResponse.getBody()).size(),
+        assertEquals(2, Objects.requireNonNull(spaceResponse.getBody()).size(),
                 "Response list size should be 2");
 
-        assertEquals(100, Object.requireNonNull(spaceResponse.getBody()).get(0).getHeight(),
+        assertEquals(100, Objects.requireNonNull(spaceResponse.getBody()).get(0).getHeight(),
                 "Height of first element should be 100");
         
-        assertEquals(200, Object.requireNonNull(spaceResponse.getBody()).get(0).getWidth(),
+        assertEquals(200, Objects.requireNonNull(spaceResponse.getBody()).get(0).getWidth(),
                 "Width of first element should be 200");
 
         assertEquals(HttpStatus.BAD_REQUEST, spaceResponse.getStatusCode(),
@@ -220,21 +222,21 @@ public class ArenaControllerTest{
         HttpEntity<Void> httpRequest = new HttpEntity<>(userHeaders);
         ResponseEntity<List<Element>> spaceResponse = restTemplate.exchange(
                 spaceUrl,
-                HttpMethod.GET,
+                GET,
                 httpRequest, 
                 new ParameterizedTypeReference<List<Element>>(){}
         );
 
         // delete element
-        DeleteElementDto deleteElementRequest = new DeleteElementDto();
-        deleteElementRequest.setSpaceId(spaceId);
-        deleteElementRequest.setElementId(spaceResponse.getBody().get(0).getId());
+//        DeleteElementDto deleteElementRequest = new DeleteElementDto();
+//        deleteElementRequest.setSpaceId(spaceId);
+//        deleteElementRequest.setElementId(spaceResponse.getBody().get(0).getId());
 
-        HttpEntity<DeleteElementDto> httpDeleteRequest = new HttpEntity<>(deleteElementRequest, userHeaders);
+//        HttpEntity<Void> httpDeleteRequest = new HttpEntity<>(userHeaders);
         ResponseEntity<String> response = restTemplate.exchange(
             delementElementUrl,
-            HttpMethod.Delete,
-            httpDeleteRequest,
+            DELETE,
+            new HttpEntity<>(userHeaders),
             String.class
         );
 
@@ -242,7 +244,7 @@ public class ArenaControllerTest{
         HttpEntity<Void> httpRequest2 = new HttpEntity<>(userHeaders);
         ResponseEntity<List<Element>> spaceResponse2 = restTemplate.exchange(
                 spaceUrl,
-                HttpMethod.GET,
+                GET,
                 httpRequest2, 
                 new ParameterizedTypeReference<List<Element>>(){}
         );
@@ -279,12 +281,12 @@ public class ArenaControllerTest{
         HttpEntity<Void> httpRequest2 = new HttpEntity<>(userHeaders);
         ResponseEntity<List<Element>> spaceResponse = restTemplate.exchange(
                 spaceGetUrl,
-                HttpMethod.GET,
+                GET,
                 httpRequest2,
                 new ParameterizedTypeReference<List<Element>>(){}
         );
 
-        assertEquals(HttpStatus.OK, spaceResponse2.getStatusCode(),
+        assertEquals(HttpStatus.OK, spaceResponse.getStatusCode(),
                 "Status code should be 200");
         assertEquals(3, Objects.requireNonNull(spaceResponse.getBody()).size(),
                 "Response list size should be 3");

@@ -1,6 +1,24 @@
 package com.kanhaiya.monkeyquest.controller;
 
+import com.kanhaiya.monkeyquest.domain.dto.request.CreateAvatarDto;
+import com.kanhaiya.monkeyquest.domain.dto.request.CreateElementDto;
+import com.kanhaiya.monkeyquest.domain.dto.request.CreateMapDto;
+import com.kanhaiya.monkeyquest.domain.dto.request.SignUpDto;
+import com.kanhaiya.monkeyquest.domain.dto.response.LoginResponse;
+import com.kanhaiya.monkeyquest.domain.entity.Element;
+import com.kanhaiya.monkeyquest.domain.entity.GameMap;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 import java.util.Objects;
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.HttpMethod.PUT;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -74,7 +92,7 @@ public class AdminControllerTest{
         adminHeaders = createHeaders(adminToken);
     }
 
-    @DisplayName("User is not able to hit admin endpoints")   
+    @DisplayName("User is not able to hit admin endpoints")
     @Test
     void userIsNotAbleToHitAdminEndpoints(){
         String url = baseUrl+":"+serverPort+"/api/v1/admin/element";
@@ -121,7 +139,7 @@ public class AdminControllerTest{
         HttpEntity<CreateElementDto> updateElementHttpRequest = new HttpEntity<>(updateElementRequest, userHeaders);
         ResponseEntity<Element> updateElementResponse = restTemplate.exchange(
                 elementUrl,
-                HttpMethod.Put,
+                PUT,
                 updateElementHttpRequest,
                 Element.class);
         
@@ -132,7 +150,7 @@ public class AdminControllerTest{
         assertEquals(HttpStatus.UNAUTHORIZED, mapResponseEntity.getStatusCode(),
         "Status code should be 403");
         
-        assertEquals(avatarResponse.UNAUTHORIZED, mapResponseEntity.getStatusCode(),
+        assertEquals(HttpStatus.UNAUTHORIZED, avatarResponse.getStatusCode(),
         "Status code should be 403");
 
         assertEquals(HttpStatus.UNAUTHORIZED, updateElementResponse.getStatusCode(),
@@ -240,5 +258,19 @@ public class AdminControllerTest{
     
         assertEquals(HttpStatus.OK, updateElementResponse.getStatusCode(),
                 "Status code should be 200");        
+    }
+
+    private static HttpHeaders createHeaders(String token){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(List.of(MediaType.APPLICATION_JSON));
+        httpHeaders.setBearerAuth(token);
+        return httpHeaders;
+    }
+    private static HttpHeaders createHeaders(){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(List.of(MediaType.APPLICATION_JSON));
+        return httpHeaders;
     }
 }
